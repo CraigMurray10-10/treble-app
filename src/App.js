@@ -16,6 +16,7 @@ function App() {
   const [token, setToken] = useState(window.localStorage.getItem("token"))
   const [searchResults, setSearchResults] = useState([]);
   const [selectedArtist, setSelectedArtist] = useState("");
+  const [artistTracks, setArtistTracks] = useState([]);
 
   const spotifyApi = new SpotifyWebApi();
 
@@ -42,7 +43,6 @@ function App() {
   const searchArtists = (searchKey) => {
     spotifyApi.search(searchKey, ["artist"]).then(
       function(data) {
-        console.log(data);
         setSearchResults(data.artists.items);
       }, function (err) {
         console.log(err);
@@ -53,14 +53,13 @@ function App() {
 
   const renderArtists = () => {
     const artists = searchResults;
-    console.log(artists)
     return (
       <div className='artistGrid'>
         {artists.map(artist => {
           return (
             <div className='artistGridItem' key={artist.id}>
               {artist.images.length ? <img className='imgButton' src={artist.images[0].url} 
-                          width="200vw" alt="" onClick={() => handleSelect(artist.id)}/>
+                          width="200vw" alt="" onClick={() => handleSelect(artist.id, artist.name)}/>
                 : <div>No Image Provided</div>}
               <br/>
               {artist.name}
@@ -71,8 +70,48 @@ function App() {
     )
   }
 
-  const handleSelect = (artistId) => {
-    setSelectedArtist(artistId)
+  const handleSelect = (artistId, artistName) => {
+    setSelectedArtist(artistName)
+    getArtistTracks(artistId)
+  }
+
+  const getArtistTracks = (artistId) => {
+    let albums = [];
+    let tracks = []
+    let tracksAll = [];
+
+    spotifyApi.getArtistAlbums(artistId, "album,single", 50).then(
+      function(data) {
+        albums = data.items;
+        for (var i = 0; i < albums.length; i++) {
+          let curAlbumId = albums[i].id;
+          spotifyApi.getAlbumTracks(curAlbumId, 50).then(
+            function(data) {
+              tracks = data.items;
+              for (var i = 0; i < tracks.length; i++) {
+                tracksAll.push(tracks[i]);
+              }
+            },
+            function(err) {
+              console.log(err)
+            }
+          )
+        }
+      },
+      function(err) {
+        console.log(err);
+      }
+    )
+    setArtistTracks(tracksAll);
+    console.log(tracksAll);
+  }
+
+  const renderSelection = () => {
+    return (
+      <div>
+        {selectedArtist}
+      </div>
+    )
   }
 
   return (
@@ -91,6 +130,7 @@ function App() {
             </div>
           }
           {searchResults && !selectedArtist && renderArtists()}
+          {selectedArtist && renderSelection()}
       </header>
     </div>
   );
