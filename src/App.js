@@ -91,6 +91,9 @@ function App() {
               for (var i = 0; i < tracks.length; i++) {
                 tracksAll.push(tracks[i]);
               }
+              setArtistTracks(tracksAll);
+              console.log(tracksAll);
+              console.log(tracksAll.length);
             },
             function(err) {
               console.log(err)
@@ -102,14 +105,19 @@ function App() {
         console.log(err);
       }
     )
-    setArtistTracks(tracksAll);
-    console.log(tracksAll);
   }
 
   const renderSelection = () => {
+    // var previewURL = artistTracks[0].preview_url;
+    // console.log(artistTracks.length );
+
+
     return (
       <div>
         {selectedArtist}
+        {/* <p>Play
+        {previewURL}
+        </p> */}
       </div>
     )
   }
@@ -130,7 +138,7 @@ function App() {
             </div>
           }
           {searchResults && !selectedArtist && renderArtists()}
-          {selectedArtist && renderSelection()}
+          {selectedArtist && artistTracks && renderSelection()}
       </header>
     </div>
   );
