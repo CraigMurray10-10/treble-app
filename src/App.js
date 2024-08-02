@@ -17,6 +17,7 @@ function App() {
   const [searchResults, setSearchResults] = useState([]);
   const [selectedArtist, setSelectedArtist] = useState("");
   const [artistTracks, setArtistTracks] = useState([]);
+  const [gotTracks, setGotTracks] = useState(false);
 
   const spotifyApi = new SpotifyWebApi();
 
@@ -72,28 +73,25 @@ function App() {
 
   const handleSelect = (artistId, artistName) => {
     setSelectedArtist(artistName)
-    getArtistTracks(artistId)
+    getTracks(artistId);
   }
 
-  const getArtistTracks = (artistId) => {
+  const getTracks = async (artistId) => {
     let albums = [];
     let tracks = []
     let tracksAll = [];
 
-    spotifyApi.getArtistAlbums(artistId, "album,single", 50).then(
-      function(data) {
+    // BEGIN ASYNC BLOCK
+    await spotifyApi.getArtistAlbums(artistId, "album,single", 50).then( 
+      async function(data) { 
         albums = data.items;
         for (var i = 0; i < albums.length; i++) {
           let curAlbumId = albums[i].id;
-          spotifyApi.getAlbumTracks(curAlbumId, 50).then(
+          // INNER ASYNC BLOCK, prevents loop ending & state updating before tracks received      
+          await spotifyApi.getAlbumTracks(curAlbumId, 50).then(
             function(data) {
               tracks = data.items;
-              for (var i = 0; i < tracks.length; i++) {
-                tracksAll.push(tracks[i]);
-              }
-              setArtistTracks(tracksAll);
-              console.log(tracksAll);
-              console.log(tracksAll.length);
+              tracksAll.push(...tracks);
             },
             function(err) {
               console.log(err)
@@ -105,19 +103,22 @@ function App() {
         console.log(err);
       }
     )
+    // END ASYNC BLOCK, state will only update after all requests finished
+    setArtistTracks(tracksAll);
+    setGotTracks(true);
   }
 
   const renderSelection = () => {
-    // var previewURL = artistTracks[0].preview_url;
-    // console.log(artistTracks.length );
-
-
+    console.log(artistTracks)
+    console.log("render")
+    var randPreview = artistTracks[Math.floor(Math.random()*artistTracks.length)].preview_url;
+    console.log(randPreview);
     return (
       <div>
         {selectedArtist}
-        {/* <p>Play
-        {previewURL}
-        </p> */}
+        <p>
+        <a href={randPreview}>Play</a>
+        </p>
       </div>
     )
   }
@@ -137,8 +138,8 @@ function App() {
               <button onClick={logout}>Logout</button>
             </div>
           }
-          {searchResults && !selectedArtist && renderArtists()}
-          {selectedArtist && artistTracks && renderSelection()}
+          {token && searchResults && !selectedArtist && renderArtists()}
+          {selectedArtist && (gotTracks ? renderSelection() : "Loading")}
       </header>
     </div>
   );
