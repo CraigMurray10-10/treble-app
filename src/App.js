@@ -73,6 +73,8 @@ function App() {
 
   const handleSelect = (artistId, artistName) => {
     setSelectedArtist(artistName)
+    setArtistTracks([]);
+    setGotTracks(false);
     getTracks(artistId);
   }
 
@@ -117,7 +119,7 @@ function App() {
       <div>
         {selectedArtist}
         <p>
-        <a href={randPreview}>Play</a>
+        <a href={randPreview} target="_blank" >Play</a>
         </p>
       </div>
     )
@@ -138,8 +140,8 @@ function App() {
               <button onClick={logout}>Logout</button>
             </div>
           }
-          {token && searchResults && !selectedArtist && renderArtists()}
           {selectedArtist && (gotTracks ? renderSelection() : "Loading")}
+          {token && searchResults && renderArtists()}
       </header>
     </div>
   );
