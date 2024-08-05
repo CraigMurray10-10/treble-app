@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import styles from './resources/App.css';
+import './App.css';
 import SearchForm from './components/searchForm';
+import AudioPlayer from './components/audioPlayer';
 import SpotifyWebApi from 'spotify-web-api-js';
 // var Spotify = require('spotify-web-api-js');
 // var s = new Spotify();
@@ -42,7 +44,7 @@ function App() {
   }
 
   const searchArtists = (searchKey) => {
-    spotifyApi.search(searchKey, ["artist"]).then(
+    spotifyApi.search(searchKey, ["artist"], {limit: 10}).then(
       function(data) {
         setSearchResults(data.artists.items);
       }, function (err) {
@@ -59,9 +61,11 @@ function App() {
         {artists.map(artist => {
           return (
             <div className='artistGridItem' key={artist.id}>
-              {artist.images.length ? <img className='imgButton' src={artist.images[0].url} 
-                          width="200vw" alt="" onClick={() => handleSelect(artist.id, artist.name)}/>
-                : <div>No Image Provided</div>}
+              <div className='imgContainer'>
+                {artist.images.length ? <img className='imgButton' src={artist.images[0].url} 
+                            alt="" onClick={() => handleSelect(artist.id, artist.name)}/>
+                  : <div>No Image Provided</div>}
+              </div>
               <br/>
               {artist.name}
             </div>
@@ -120,6 +124,7 @@ function App() {
         {selectedArtist}
         <p>
         <a href={randPreview} target="_blank" >Play</a>
+        <AudioPlayer audioURL={randPreview}/>
         </p>
       </div>
     )
@@ -128,21 +133,27 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h2 className='test'> my feckign song app </h2>
-          {!token ? 
-            <p>
-              <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPES}`}>
-              Login to Spotify</a> 
-            </p>
+        <h2 className='text-lime-400 font-mono text-5xl'> Treb.le </h2>
+          <div>
+            <br/>
+          </div>
+      </header>
+      <div className='flex-col h-50'>
+      {!token ? 
+            <a className='text-lime-400 font-mono text-xl' href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPES}`}>
+            Login to Spotify</a> 
           : 
             <div> 
               <SearchForm searchMethod={searchArtists}/>
-              <button onClick={logout}>Logout</button>
+              <button className='text-lime-400 font-mono text-2xl' onClick={logout}>Logout</button>
+              <br/>
+              <br/>
             </div>
           }
           {selectedArtist && (gotTracks ? renderSelection() : "Loading")}
           {token && searchResults && renderArtists()}
-      </header>
+          <br/>
+      </div>
     </div>
   );
 }

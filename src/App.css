@@ -1,5 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .App {
   text-align: center;
+  background-color: black;
+  background-image: url("./resources/background2.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom;
+  height: 100%;
+  min-height: 100vh;
 }
 
 .App-logo {
@@ -14,8 +25,8 @@
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  background-color: transparent;
+  min-height: 40vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -25,14 +36,45 @@
 }
 
 .App-link {
-  color: #61dafb;
+  color: #a3e635 ;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+div {
+  color:#a3e635;
+  font-family: monospace;
+}
+
+.artistGrid {
+  display: grid;
+  flex-direction: column;
+  margin: auto;
+  width: 85%;
+  background-color: black;
+  color:#a3e635;
+  font-size: 3vh;
+  grid-template-columns: repeat(auto-fit, minmax(30vh, 1fr));
+  grid-gap: 5vh;
+}
+
+.artistGridItem {
+  width: 15vw;
+  background-color: black;
+  border-color: #a3e635;
+  border-width: 1px;
+  padding: 5vh;
+}
+
+.imgContainer {
+  width: 10vw;
+  height: 10vw;
+  overflow: hidden;
+  border-color: #a3e635;
+  border-width: 0.1rem;
+  margin: auto;
+}
+
+.imgButton {
+  object-fit: cover;
+  cursor: pointer;
+  margin: auto;
 }

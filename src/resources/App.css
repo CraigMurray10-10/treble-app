@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .App {
   text-align: center;
 }
@@ -45,12 +49,12 @@
   display: grid;
   width: 90%;
   grid-template-columns: repeat(auto-fit, minmax(30vh, 1fr));
-  grid-gap: 5vh;
+  grid-gap: 3vh;
 }
 
 .artistGridItem {
   min-height: 20vh;
   min-width: 20vh;
   background-color: #505050;
-  padding: 3vh;
+  padding: 2vh;
 }
